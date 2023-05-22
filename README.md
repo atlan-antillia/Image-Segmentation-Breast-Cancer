@@ -196,7 +196,7 @@ Please run the following bat file.<br>
 <pre>
 >2.evalute.bat
 </pre>
-, which simply run the following command.<br>
+, which simply runs the following command.<br>
 <pre>
 >python TensorflowUNetBreastCancerEvaluator.py
 </pre>
