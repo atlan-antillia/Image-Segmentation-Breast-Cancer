@@ -81,6 +81,14 @@ Breast-Cancer
         ├─images
         └─masks
 </pre>
+<b>Samples of augmented train/malignant/imasgs</b><br>
+<img src="./asset/Breast-Cancer_train_malignant_images.png"><br>
+<br>
+<b>Samples of augmented train/malignant/imasgs</b><br>
+<img src="./asset/Breast-Cancer_train_malignant_masks.png"><br>
+
+<br>
+
 <br>
 <h2>
 3 Train TensorflowUNet Model
