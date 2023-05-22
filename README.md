@@ -175,7 +175,7 @@ On detail of these functions, please refer to <a href="./losses.py">losses.py</a
 We have also used Python <a href="./BreastCancerDataset.py">BreastCancerDataset.py</a> script to create
 train and test dataset from the original and segmented images specified by
 <b>image_datapath</b> and <b>mask_datapath </b> parameters in the configratration file.<br>
-The training process has just been stopped at epoch 27 by an early-stopping callback as shown below.<br><br>
+The training process has just been stopped at epoch 24 by an early-stopping callback as shown below.<br><br>
 <img src="./asset/train_console_at_epoch_24_0523.png" width="720" height="auto"><br>
 <br>
 The <b>val_binary_accuracy</b> is very high as shown below from the beginning of the training.<br>
