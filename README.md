@@ -4,7 +4,7 @@
 </h2>
 This is an experimental project to detect <b>Breast Cancer</b> based on 
 Breast Ultrasound Images Dataset (BUSI), by using our <a href="https://github.com/atlan-antillia/Tensorflow-Slightly-Flexible-UNet">Tensorflow-Slightly-Flexible-UNet Model.</a><br>
-The original dataset used here has been take from the followin web site:<br>
+The original dataset used here has been take from the following web site:<br>
 <b>Breast Ultrasound Images Dataset</b><br>
 Breast ultrasound images for classification, detection & segmentation<br>
 
