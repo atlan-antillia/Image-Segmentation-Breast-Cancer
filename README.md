@@ -3,8 +3,7 @@
 1 Image-Segmentation-Breast-Cancer
 </h2>
 This is an experimental project to detect <b>Breast Cancer</b> based on 
-Breast Ultrasound Images Dataset (BUSI), by using Google Brain AutoML
-<a href="https://github.com/google/automl/tree/master/efficientdet"> EfficientDet.</a><br>
+Breast Ultrasound Images Dataset (BUSI), by using our <a href="https://github.com/atlan-antillia/Tensorflow-Slightly-Flexible-UNet">Tensorflow-Slightly-Flexible-UNet Model.</a><br>
 The original dataset used here has been take from the followin web site:<br>
 <b>Breast Ultrasound Images Dataset</b><br>
 Breast ultrasound images for classification, detection & segmentation<br>
