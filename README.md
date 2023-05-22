@@ -80,13 +80,14 @@ Breast-Cancer
         ├─images
         └─masks
 </pre>
-<b>Samples of augmented train/malignant/imasgs</b><br>
+<b>Samples of augmented train/malignant/images</b><br>
 <img src="./asset/Breast-Cancer_train_malignant_images.png" width="1024" height="auto"><br>
 <br>
-<b>Samples of augmented train/malignant/imasgs</b><br>
+<b>Samples of augmented train/malignant/masks</b><br>
 <img src="./asset/Breast-Cancer_train_malignant_masks.png"  width="1024" height="auto"><br>
 
-<br>
+<b>Breast-Cancer dataset inspection</b><br>
+<img src="./asset/dataset_inspection.png" width="720" height="auto"><br>
 
 <br>
 <h2>
