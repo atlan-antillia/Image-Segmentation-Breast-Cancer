@@ -230,7 +230,7 @@ Some green tumor regions in the original images of the mini_test dataset above h
 
 <br>
 <b>Inferred images merged (mini_test_output_merged)</b><br>
-Merged the infered images<br>.
+Merged the inferred images to the original images<br>.
 <img src="./asset/mini_test_output_merged.png" width="1024" height="auto"><br><br>
 
 <br>
