@@ -225,12 +225,10 @@ We have also tried to infer the segmented region for <b>mini_test</b> dataset, w
 <img src="./asset/mini_test.png" width="1024" height="auto"><br>
 <br>
 <b>Inferred images (mini_test_output)</b><br>
-Some green tumor regions in the original images of the mini_test dataset above have been detected as shown below.<br>
 <img src="./asset/mini_test_output.png" width="1024" height="auto"><br><br>
 
 <br>
-<b>Inferred images merged (mini_test_output_merged)</b><br>
-Merged the inferred images to the original images<br>.
+<b>Merged inferred images</b><br>
 <img src="./asset/mini_test_output_merged.png" width="1024" height="auto"><br><br>
 
 <br>
