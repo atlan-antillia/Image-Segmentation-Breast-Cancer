@@ -1,4 +1,4 @@
-# Image-Segmentation-Breast-Cancer (Updated: 2023/05/23)
+# Image-Segmentation-Breast-Cancer (Updated: 2023/05/24)
 <h2>
 1 Image-Segmentation-Breast-Cancer
 </h2>
@@ -27,6 +27,9 @@ U-Net: Convolutional Networks for Biomedical Image Segmentation
  https://arxiv.org/pdf/1505.04597.pdf
 </pre>
 
+<li>
+2023/05/24: Modified to write the merged (image+mask) infered image files.
+</li>
 
 <br>
 <h2>
@@ -106,7 +109,7 @@ Please run the following bat file.<br>
 
 <pre>
 ; train_eval_infer.config
-; 2023/5/22 antillia.com
+; 2023/5/24 antillia.com
 ; Modified to use loss and metric
 ; Specify loss as a function nams
 ; loss =  "binary_crossentropy"
@@ -144,6 +147,7 @@ mask_datapath  = "./Breast-Cancer/test/malignant/masks/"
 [infer] 
 images_dir    = "./mini_test" 
 output_dir    = "./mini_test_output"
+merged_dir    = "./mini_test_output_merged"
 </pre>
 
 Since <pre>loss = "binary_crossentropy"</pre> and <pre>metrics = ["binary_accuracy"] </pre> are specified 
@@ -221,10 +225,16 @@ We have also tried to infer the segmented region for <b>mini_test</b> dataset, w
 <img src="./asset/mini_test.png" width="1024" height="auto"><br>
 <br>
 <b>Infered images (mini_test_output)</b><br>
-Some green tumor regions in the original images of the mini_test dataset above have been detected as shown below.
+Some green tumor regions in the original images of the mini_test dataset above have been detected as shown below.<br>
 <img src="./asset/mini_test_output.png" width="1024" height="auto"><br><br>
 
 <br>
+<b>Infered images merged (mini_test_output_merged)</b><br>
+Merged the infered images<br>.
+<img src="./asset/mini_test_output_merged.png" width="1024" height="auto"><br><br>
+
+<br>
+
 <!--
 -->
 
