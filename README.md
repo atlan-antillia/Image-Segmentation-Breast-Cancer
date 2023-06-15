@@ -28,8 +28,8 @@ U-Net: Convolutional Networks for Biomedical Image Segmentation
 </pre>
 <ul>
 <li>2023/05/24: Modified to write the merged (image+mask) inferred image files.</li>
-<li>2023/06/16: Created ./projects/Brain-Cancer folder.</li>
-<li>2023/06/16: Modified to use ImageMaskDataset instead of BrainCancerDatset.</li>
+<li>2023/06/16: Created ./projects/Breast-Cancer folder.</li>
+<li>2023/06/16: Modified to use ImageMaskDataset instead of BreastCancerDataset.</li>
 
 </ul>
 <br>
