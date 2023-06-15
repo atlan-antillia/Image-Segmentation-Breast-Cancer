@@ -71,7 +71,7 @@ class GrayScaleImageWriter:
     image = image.resize(resized)
     # image.putalpha(alpha=0)
     image.save(image_filepath)
-
+    image = image.convert("RGB")   # 2023/06/15
     print("=== Saved {}". format(image_filepath))
     # 2023/0524
     #mask = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)

@@ -52,7 +52,7 @@ import random
 import numpy as np
 import cv2
 import tensorflow as tf
-
+from PIL import Image
 from tensorflow.keras.layers import Lambda
 from tensorflow.keras.layers import Input
 
@@ -74,6 +74,7 @@ from EpochChangeCallback import EpochChangeCallback
 from GrayScaleImageWriter import GrayScaleImageWriter
 
 from losses import dice_coef, basnet_hybrid_loss, sensitivity, specificity
+from losses import iou_coef, iou_loss, bce_iou_loss
 
 """
 See: https://www.tensorflow.org/api_docs/python/tf/keras/metrics
@@ -305,7 +306,98 @@ class TensorflowUNet:
     print("Test loss    :{}".format(round(score[0], 4)))     
     print("Test accuracy:{}".format(round(score[1], 4)))
      
+  # 2023/06/05
+  # 1 Split the orginal image to some tiled-images
+  # 2 Infer segmentation regions on those images 
+  # 3 Merge detected regions into one image
+  # 2023/06/15
+  def infer_tiles(self, input_dir, output_dir, expand=True):
     
+    image_files  = glob.glob(input_dir + "/*.png")
+    image_files += glob.glob(input_dir + "/*.jpg")
+    image_files += glob.glob(input_dir + "/*.tif")
+    image_files += glob.glob(input_dir + "/*.bmp")
+
+    merged_dir   = None
+    try:
+      merged_dir = self.config.get(TILEDINFER, "merged_dir")
+      if os.path.exists(merged_dir):
+        shutil.rmtree(merged_dir)
+      if not os.path.exists(merged_dir):
+        os.makedirs(merged_dir)
+    except:
+      pass
+    split_size  = self.config.get(MODEL, "image_width")
+    print("---split_size {}".format(split_size))
+
+    for image_file in image_files:
+      image = Image.open(image_file)
+      w, h  = image.size
+
+      vert_split_num  = h // split_size
+      if h % split_size != 0:
+        vert_split_num += 1
+
+      horiz_split_num = w // split_size
+      if w % split_size != 0:
+        horiz_split_num += 1
+
+    
+      background      = Image.new("L", (w, h))
+      #print("=== width {} height {}".format(w, h))
+      #print("=== horiz_split_num {}".format(horiz_split_num))
+      #print("=== vert_split_num  {}".format(vert_split_num))
+      #input("----")
+      for j in range(vert_split_num):
+        for i in range(horiz_split_num):
+          left  = split_size * i
+          upper = split_size * j
+          right = left  + split_size
+          lower = upper + split_size
+
+          if left >=w or upper >=h:
+            continue 
+      
+          cropped = image.crop((left, upper, right, lower))
+          cropped = cropped.resize((split_size, split_size))
+          predictions = self.predict([cropped], expand=expand)
+          prediction  = predictions[0]
+          mask        = prediction[0]    
+
+          img         = self.mask_to_image(mask)
+          img         = img.convert("L")
+          #blurred     = img.filter(filter=ImageFilter.BLUR)
+          background.paste(img, (left, upper))
+          #print("---paste j:{} i:{}".format(j, i))
+          #input("HHHIT")  
+      basename = os.path.basename(image_file)
+      output_file = os.path.join(output_dir, basename)
+      #input("----")
+      #background = background.filter(filter=ImageFilter.BLUR)
+      background.save(output_file)
+      
+      if merged_dir !=None:
+        # Resize img to the original size (w, h)
+        img   = np.array(image)
+        img   = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        mask  = np.array(background)
+        mask   = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+        img += mask
+
+        merged_file = os.path.join(merged_dir, basename)
+        cv2.imwrite(merged_file, img)     
+
+
+  def mask_to_image(self, data, factor=255.0):
+    
+    h = data.shape[0]
+    w = data.shape[1]
+
+    data = data*factor
+    data = data.reshape([w, h])
+    image = Image.fromarray(data)
+    return image
+
 if __name__ == "__main__":
 
   try:

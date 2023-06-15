@@ -1,1 +1,0 @@
-python ./TensorflowUNetBreastCancerInfer.py
