@@ -1,4 +1,4 @@
-# Image-Segmentation-Breast-Cancer (Updated: 2023/06/16)
+# Image-Segmentation-Breast-Cancer (Updated: 2023/06/25)
 <h2>
 1 Image-Segmentation-Breast-Cancer
 </h2>
@@ -30,6 +30,8 @@ U-Net: Convolutional Networks for Biomedical Image Segmentation
 <li>2023/05/24: Modified to write the merged (image+mask) inferred image files.</li>
 <li>2023/06/16: Created ./projects/Breast-Cancer folder.</li>
 <li>2023/06/16: Modified to use ImageMaskDataset instead of BreastCancerDataset.</li>
+<li>2023/06/25 Updated TensorflowUNet.py to backup copies of previous eval_dir and model_dir.</li>
+<li>2023/06/25 Modified TensorflowUNet.py to copy a configuration file to a model saving directory.</li>
 
 </ul>
 <br>
@@ -132,7 +134,7 @@ Breast-Cancer
 </h2>
  We have trained Breast-Cancer TensorflowUNet Model by using the following
  <b>train_eval_infer.config</b> file. <br>
-Please run the following bat file.<br>
+Please move <b>./projects/Breast-Cancer/</b>, and run the following bat file.<br>
 <pre>
 >1.train.bat
 </pre>
@@ -143,10 +145,13 @@ Please run the following bat file.<br>
 
 <pre>
 ; train_eval_infer.config
-; 2023/6/15 antillia.com
+; 2023/6/25 antillia.com
+; num_layers     = 7
+; normalization  = True
+
 ; Modified to use loss and metric
 ; Specify loss as a function nams
-; loss =  "binary_crossentropy"
+; loss =  "bce_iou_loss"
 ; Specify metrics as a list of function name
 ; metrics = ["binary_accuracy"]
 ; Please see: https://www.tensorflow.org/api_docs/python/tf/keras/Model?version=stable#compile
@@ -157,10 +162,15 @@ image_height   = 256
 image_channels = 3
 num_classes    = 1
 base_filters   = 16
-num_layers     = 6
+base_kernels   = (3,3)
+;2023/06/24
+num_layers     = 7
+normalization  = True
+
+dilation       = (1,1)
 dropout_rate   = 0.08
 learning_rate  = 0.001
-loss           = "binary_crossentropy"
+loss           = "bce_iou_loss"
 metrics        = ["binary_accuracy"]
 show_summary   = False
 
@@ -173,6 +183,7 @@ model_dir     = "./models"
 eval_dir      = "./eval"
 image_datapath = "./Breast-Cancer/train/malignant/images/"
 mask_datapath  = "./Breast-Cancer/train/malignant/masks/"
+create_backup  = True
 
 [eval]
 image_datapath = "./Breast-Cancer/test/malignant/images/"
@@ -218,24 +229,24 @@ On detail of these functions, please refer to <a href="./losses.py">losses.py</a
 We have also used Python <a href="./BreastCancerDataset.py">BreastCancerDataset.py</a> script to create
 train and test dataset from the original and segmented images specified by
 <b>image_datapath</b> and <b>mask_datapath </b> parameters in the configratration file.<br>
-The training process has just been stopped at epoch 24 by an early-stopping callback as shown below.<br><br>
-<img src="./asset/train_console_at_epoch_23_0615.png" width="720" height="auto"><br>
+The training process has just been stopped at epoch 33 by an early-stopping callback as shown below.<br><br>
+<img src="./asset/train_console_at_epoch_33_0624.png" width="720" height="auto"><br>
 <br>
 The <b>val_binary_accuracy</b> is very high as shown below from the beginning of the training.<br>
-<b>Train accuracy line graph</b>:<br>
-<img src="./asset/train_accuracies_23.png" width="720" height="auto"><br>
+<b>Train metrics line graph</b>:<br>
+<img src="./asset/train_metrics_33.png" width="720" height="auto"><br>
 
 <br>
 The val_loss is also very low as shown below from the beginning of the training.<br>
 <b>Train losses line graph</b>:<br>
-<img src="./asset/train_losses_23.png" width="720" height="auto"><br>
+<img src="./asset/train_losses_33.png" width="720" height="auto"><br>
 
 
 <h2>
 5 Evaluation
 </h2>
  We have evaluated prediction accuracy of our Pretrained Breast-Cancer Model by using <b>test</b> dataset.
-Please run the following bat file.<br>
+Please move <b>./projects/Breast-Cancer/</b>, and run the following bat file.<br>
 <pre>
 >2.evalute.bat
 </pre>
@@ -244,7 +255,7 @@ Please run the following bat file.<br>
 >python .,/../TensorflowUNetEvaluator.py train_eval_infer.config
 </pre>
 The evaluation result of this time is the following.<br>
-<img src="./asset/evaluate_console_at_epoch_23_0615.png" width="720" height="auto"><br>
+<img src="./asset/evaluate_console_at_epoch_33_0624.png" width="720" height="auto"><br>
 <br>
 
 <h2>
@@ -253,6 +264,7 @@ The evaluation result of this time is the following.<br>
 We have also tried to infer the segmented region for <b>mini_test</b> dataset, which is a very small dataset including only ten images extracted from <b>test</b> dataset,
  by using our Pretrained Breast-Cancer Model.<br>
 <pre>
+Please move <b>./projects/Breast-Cancer/</b>, and the following bat file.<br>
 >3.infer.bat
 </pre>
 , which simply runs the following command.<br>
@@ -357,169 +369,4 @@ functions. This wide range of applications will lead to the development and grow
 }
 </pre>
 <br>
-
-<h2>
-Appendix
-</h2>
-<h3>Model summary</h3>
-Please run the following command to see the summary of TensorflowUNet Model
-defined by <b>train_eval_infer.config</b>. <br>
-<pre>
->python TensorflowUNet.py
-</pre>
-<a href="./asset/model.png">Model Visualization</a>
-<pre>
-__________________________________________________________________________________________________
- Layer (type)                   Output Shape         Param #     Connected to
-==================================================================================================
- input_1 (InputLayer)           [(None, 256, 256, 3  0           []
-                                )]
-
- lambda (Lambda)                (None, 256, 256, 3)  0           ['input_1[0][0]']
-
- conv2d (Conv2D)                (None, 256, 256, 16  448         ['lambda[0][0]']
-                                )
-
- dropout (Dropout)              (None, 256, 256, 16  0           ['conv2d[0][0]']
-                                )
-
- conv2d_1 (Conv2D)              (None, 256, 256, 16  2320        ['dropout[0][0]']
-                                )
-
- max_pooling2d (MaxPooling2D)   (None, 128, 128, 16  0           ['conv2d_1[0][0]']
-                                )
-
- conv2d_2 (Conv2D)              (None, 128, 128, 32  4640        ['max_pooling2d[0][0]']
-                                )
-
- dropout_1 (Dropout)            (None, 128, 128, 32  0           ['conv2d_2[0][0]']
-                                )
-
- conv2d_3 (Conv2D)              (None, 128, 128, 32  9248        ['dropout_1[0][0]']
-                                )
-
- max_pooling2d_1 (MaxPooling2D)  (None, 64, 64, 32)  0           ['conv2d_3[0][0]']
-
- conv2d_4 (Conv2D)              (None, 64, 64, 64)   18496       ['max_pooling2d_1[0][0]']
-
- dropout_2 (Dropout)            (None, 64, 64, 64)   0           ['conv2d_4[0][0]']
-
- conv2d_5 (Conv2D)              (None, 64, 64, 64)   36928       ['dropout_2[0][0]']
-
- max_pooling2d_2 (MaxPooling2D)  (None, 32, 32, 64)  0           ['conv2d_5[0][0]']
-
- conv2d_6 (Conv2D)              (None, 32, 32, 128)  73856       ['max_pooling2d_2[0][0]']
-
- dropout_3 (Dropout)            (None, 32, 32, 128)  0           ['conv2d_6[0][0]']
-
- conv2d_7 (Conv2D)              (None, 32, 32, 128)  147584      ['dropout_3[0][0]']
-
- max_pooling2d_3 (MaxPooling2D)  (None, 16, 16, 128)  0          ['conv2d_7[0][0]']
-
- conv2d_8 (Conv2D)              (None, 16, 16, 256)  295168      ['max_pooling2d_3[0][0]']
-
- dropout_4 (Dropout)            (None, 16, 16, 256)  0           ['conv2d_8[0][0]']
-
- conv2d_9 (Conv2D)              (None, 16, 16, 256)  590080      ['dropout_4[0][0]']
-
- max_pooling2d_4 (MaxPooling2D)  (None, 8, 8, 256)   0           ['conv2d_9[0][0]']
-
- conv2d_10 (Conv2D)             (None, 8, 8, 512)    1180160     ['max_pooling2d_4[0][0]']
-
- dropout_5 (Dropout)            (None, 8, 8, 512)    0           ['conv2d_10[0][0]']
-
- conv2d_11 (Conv2D)             (None, 8, 8, 512)    2359808     ['dropout_5[0][0]']
-
- max_pooling2d_5 (MaxPooling2D)  (None, 4, 4, 512)   0           ['conv2d_11[0][0]']
-
- conv2d_12 (Conv2D)             (None, 4, 4, 1024)   4719616     ['max_pooling2d_5[0][0]']
-
- dropout_6 (Dropout)            (None, 4, 4, 1024)   0           ['conv2d_12[0][0]']
-
- conv2d_13 (Conv2D)             (None, 4, 4, 1024)   9438208     ['dropout_6[0][0]']
-
- conv2d_transpose (Conv2DTransp  (None, 8, 8, 512)   2097664     ['conv2d_13[0][0]']
- ose)
-
- concatenate (Concatenate)      (None, 8, 8, 1024)   0           ['conv2d_transpose[0][0]',
-                                                                  'conv2d_11[0][0]']
-
- conv2d_14 (Conv2D)             (None, 8, 8, 512)    4719104     ['concatenate[0][0]']
-
- dropout_7 (Dropout)            (None, 8, 8, 512)    0           ['conv2d_14[0][0]']
-
- conv2d_15 (Conv2D)             (None, 8, 8, 512)    2359808     ['dropout_7[0][0]']
-
- conv2d_transpose_1 (Conv2DTran  (None, 16, 16, 256)  524544     ['conv2d_15[0][0]']
- spose)
-
- concatenate_1 (Concatenate)    (None, 16, 16, 512)  0           ['conv2d_transpose_1[0][0]',
-                                                                  'conv2d_9[0][0]']
-
- conv2d_16 (Conv2D)             (None, 16, 16, 256)  1179904     ['concatenate_1[0][0]']
-
- dropout_8 (Dropout)            (None, 16, 16, 256)  0           ['conv2d_16[0][0]']
-
- conv2d_17 (Conv2D)             (None, 16, 16, 256)  590080      ['dropout_8[0][0]']
-
- conv2d_transpose_2 (Conv2DTran  (None, 32, 32, 128)  131200     ['conv2d_17[0][0]']
- spose)
-
- concatenate_2 (Concatenate)    (None, 32, 32, 256)  0           ['conv2d_transpose_2[0][0]',
-                                                                  'conv2d_7[0][0]']
-
- conv2d_18 (Conv2D)             (None, 32, 32, 128)  295040      ['concatenate_2[0][0]']
-
- dropout_9 (Dropout)            (None, 32, 32, 128)  0           ['conv2d_18[0][0]']
-
- conv2d_19 (Conv2D)             (None, 32, 32, 128)  147584      ['dropout_9[0][0]']
-
- conv2d_transpose_3 (Conv2DTran  (None, 64, 64, 64)  32832       ['conv2d_19[0][0]']
- spose)
-
- concatenate_3 (Concatenate)    (None, 64, 64, 128)  0           ['conv2d_transpose_3[0][0]',
-                                                                  'conv2d_5[0][0]']
-
- conv2d_20 (Conv2D)             (None, 64, 64, 64)   73792       ['concatenate_3[0][0]']
-
- dropout_10 (Dropout)           (None, 64, 64, 64)   0           ['conv2d_20[0][0]']
-
- conv2d_21 (Conv2D)             (None, 64, 64, 64)   36928       ['dropout_10[0][0]']
-
- conv2d_transpose_4 (Conv2DTran  (None, 128, 128, 32  8224       ['conv2d_21[0][0]']
- spose)                         )
-
- concatenate_4 (Concatenate)    (None, 128, 128, 64  0           ['conv2d_transpose_4[0][0]',
-                                )                                 'conv2d_3[0][0]']
-
- conv2d_22 (Conv2D)             (None, 128, 128, 32  18464       ['concatenate_4[0][0]']
-                                )
-
- dropout_11 (Dropout)           (None, 128, 128, 32  0           ['conv2d_22[0][0]']
-                                )
-
- conv2d_23 (Conv2D)             (None, 128, 128, 32  9248        ['dropout_11[0][0]']
-                                )
-
- conv2d_transpose_5 (Conv2DTran  (None, 256, 256, 16  2064       ['conv2d_23[0][0]']
- spose)                         )
-
- concatenate_5 (Concatenate)    (None, 256, 256, 32  0           ['conv2d_transpose_5[0][0]',
-                                )                                 'conv2d_1[0][0]']
-
- conv2d_24 (Conv2D)             (None, 256, 256, 16  4624        ['concatenate_5[0][0]']
-                                )
-
- dropout_12 (Dropout)           (None, 256, 256, 16  0           ['conv2d_24[0][0]']
-                                )
-
- conv2d_25 (Conv2D)             (None, 256, 256, 16  2320        ['dropout_12[0][0]']
-                                )
-
- conv2d_26 (Conv2D)             (None, 256, 256, 1)  17          ['conv2d_25[0][0]']
-
-==================================================================================================
-</pre>
-
-
 

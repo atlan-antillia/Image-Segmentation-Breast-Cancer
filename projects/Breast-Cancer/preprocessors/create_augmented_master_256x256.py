@@ -14,7 +14,7 @@
 # ==============================================================================
 
 #
-# create_augmented_master_256x256.py
+# create_master_512x512.py
 # 2023/05/22 Antillia.com Toshiyuki Arai
 # 
 # 1 This splits the original Dataset_BUSI_with_GT dataset 
